@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+
+  apanaj_optimizer-jpeg:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: apanaj_ptimizer-jpeg
+    expose:
+      - "80"

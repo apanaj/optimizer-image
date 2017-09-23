@@ -1,6 +1,6 @@
 .buildpath
 .DS_Store
-/.idea
+.idea/
 .vagrant
 .project
 .settings/
@@ -9,6 +9,16 @@
 build/
 nbproject
 
+__pycache__/
+*.py[cod]
+
 tmp/
 
 docker-compose.local.yml
+
+# Distribution / packaging
+.Python
+env/
+venv/
+
+.python-version

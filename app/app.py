@@ -4,7 +4,6 @@ import uuid
 import re
 from urllib.parse import urlparse
 from os.path import splitext, basename
-from PIL import Image
 
 app = Flask(__name__)
 

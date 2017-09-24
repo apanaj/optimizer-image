@@ -24,11 +24,14 @@ def optimize():
     if not file_ext:
         return jsonify({'error': 'The `url` parameter is not valid '}), 400
 
+    quality = request.args.get('q', 75)
+
     saved_filename = str(uuid.uuid4()) + file_ext
     source_filepath = SOURCE_FOLDER + saved_filename
-    cmd_download_image = 'wget -O {filepath} {url}'.format(
+    cmd_download_image = 'wget --no-check-certificate -O {filepath} {url}'.format(
         filepath=source_filepath, url=url)
 
+    print(cmd_download_image)
     args = cmd_download_image.split()
     process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
@@ -36,8 +39,10 @@ def optimize():
 
     # Optimize Part
     optimized_filepath = OPTIMIZED_FOLDER + saved_filename
-    optimize_cmd = "/home/majid/mozjpeg/cjpeg -quality 80 {source_path} > {destination_path}".format(
-        source_path=source_filepath, destination_path=optimized_filepath
+    optimize_cmd = "/home/majid/mozjpeg/cjpeg -quality {quality} {source_path} > {destination_path}".format(
+        quality=quality,
+        source_path=source_filepath,
+        destination_path=optimized_filepath
     )
     process = subprocess.Popen(optimize_cmd, shell=True, stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)

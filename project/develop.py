@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from project.app import create_app
-from project.config import DevelopmentConfig
+from app import create_app
+from config import DevelopmentConfig
 
 application = create_app(DevelopmentConfig, 'image-optimizer')
 

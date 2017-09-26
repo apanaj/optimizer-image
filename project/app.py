@@ -1,5 +1,5 @@
 from flask import Flask
-from project.views import mod
+from views import mod
 
 
 def create_app(config, app_name):

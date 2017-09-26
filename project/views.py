@@ -66,7 +66,7 @@ def image_optimizer(filename, out_type, size, quality):
         source_filepath = convert_filepath
 
     # ---------- Step 3- change image quality with optimize command
-    optimize_cmd = "/home/majid/mozjpeg/cjpeg -quality {quality} {source_filepath} > {destination_filepath}".format(
+    optimize_cmd = current_app.config['MOZJPEG_FOLDER'] + "cjpeg -quality {quality} {source_filepath} > {destination_filepath}".format(
         quality=quality,
         source_filepath=source_filepath,
         destination_filepath=optimized_filepath

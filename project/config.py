@@ -5,6 +5,7 @@ class DevelopmentConfig(object):
     SOURCE_FOLDER = MEDIA_FOLDER + 'source/'
     CONVERT_FOLDER = MEDIA_FOLDER + 'convert/'
     OPTIMIZED_FOLDER = MEDIA_FOLDER + 'optimized/'
+    MOZJPEG_FOLDER = '/home/majid/mozjpeg/'
 
 
 class DeploymentConfig(object):
@@ -13,3 +14,4 @@ class DeploymentConfig(object):
     SOURCE_FOLDER = MEDIA_FOLDER + 'source/'
     CONVERT_FOLDER = MEDIA_FOLDER + 'convert/'
     OPTIMIZED_FOLDER = MEDIA_FOLDER + 'optimized/'
+    MOZJPEG_FOLDER = '/home/majid/mozjpeg/'

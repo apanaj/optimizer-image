@@ -1,5 +1,9 @@
 
-class DevelopmentConfig(object):
+class DefaultConfig(object):
+    SECRET_KEY = 'EBk^qa7j[fLH[o0?&/kTuN6'
+
+
+class DevelopmentConfig(DefaultConfig):
     DEBUG = True
     MEDIA_FOLDER = '/home/majid/media/'
     SOURCE_FOLDER = MEDIA_FOLDER + 'source/'
@@ -8,7 +12,7 @@ class DevelopmentConfig(object):
     MOZJPEG_FOLDER = '/home/majid/mozjpeg/'
 
 
-class DeploymentConfig(object):
+class DeploymentConfig(DefaultConfig):
     DEBUG = False
     MEDIA_FOLDER = '/home/majid/media/'
     SOURCE_FOLDER = MEDIA_FOLDER + 'source/'

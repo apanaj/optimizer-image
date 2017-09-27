@@ -77,7 +77,7 @@ def image_optimizer(filename, out_type, size, quality):
     return send_file(optimized_filepath, mimetype='image/jpg')
 
 
-@mod.route('/opt', methods=['GET', 'POST'])
+@mod.route('/', methods=['GET', 'POST'])
 def optimize():
     if request.method == 'POST':
         try:

@@ -53,7 +53,7 @@ COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN mkdir /store \
     && mkdir /store/source \
-    && mkdir /store/covert \
+    && mkdir /store/convert \
     && mkdir /store/optimized
 
 COPY  ./project/ /project/

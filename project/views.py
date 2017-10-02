@@ -32,8 +32,8 @@ def save_image_from_form(file):
 
 def image_optimizer(filename, out_type, size, quality):
     source_filepath = filename
-    convert_filepath = current_app.config['CONVERT_FOLDER'] + basename(filename)
-    optimized_filepath = current_app.config['OPTIMIZED_FOLDER'] + basename(filename)
+    convert_filepath = current_app.config['CONVERT_FOLDER'] + 'convert-' + basename(filename)
+    optimized_filepath = current_app.config['OPTIMIZED_FOLDER'] + 'optimize-' + basename(filename)
     quality = quality or 75
 
     # ---------- Step 1- argument validation

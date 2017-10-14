@@ -2,12 +2,10 @@ version: '2'
 
 services:
 
-  apanaj_optimizer-jpeg:
+  apanaj_optimizer-image:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: apanaj_ptimizer-jpeg
+    image: apanaj_ptimizer-image
     expose:
       - "80"
-    ports:
-      - "80:80"

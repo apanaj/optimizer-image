@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+
+  apanaj_optimizer-image:
+    ports:
+      - "80:80"

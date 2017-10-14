@@ -2,14 +2,7 @@ version: '2'
 
 services:
 
-  apanaj_optimizer-jpeg:
-    build:
-      context: ./.docker-compose/optimizer-jpeg
-      dockerfile: Dockerfile
-    image: apanaj_ptimizer-jpeg
-      expose:
-      ## On Private Network
-        - "80"
+  apanaj_optimizer-image:
     networks:
       - apanaj-network
       - network-front-proxy

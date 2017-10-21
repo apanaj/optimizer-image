@@ -79,11 +79,22 @@ def image_optimizer(filename, out_type, size, quality):
 
 @mod.route('/', methods=['GET', 'POST'])
 def optimize():
+    out_type = request.args.get('type')
+    size = request.args.get('size')
+    quality = request.args.get('q')
+
     if request.method == 'POST':
         try:
             filename = save_image_from_form(request.files['file'])
         except:
             return jsonify({'error': 'The `file` is not valid'}), 400
+
+        if 'type' in request.form:
+            out_type = request.form['type']
+        if 'size' in request.form:
+            size = request.form['size']
+        if 'q' in request.form:
+            quality = request.form['q']
     else:
         try:
             url = request.args.get('url')
@@ -95,10 +106,6 @@ def optimize():
             filename = save_image_from_url(url)
         except:
             return jsonify({'error': 'The `url` parameter is not valid'}), 400
-
-    out_type = request.args.get('type')
-    size = request.args.get('size')
-    quality = request.args.get('q')
 
     return image_optimizer(filename, out_type, size, quality)
 

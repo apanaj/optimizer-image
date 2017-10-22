@@ -5,6 +5,8 @@ from flask import Blueprint, request, current_app, jsonify, send_file
 from urllib.parse import urlparse
 from os.path import splitext, basename
 
+from exceptions import FileNotFoundException, FileSizeException, \
+    LargeFileException
 
 mod = Blueprint('views', __name__)
 
@@ -16,9 +18,28 @@ def save_image_from_url(url):
     saved_filename = str(uuid.uuid4()) + file_ext
     source_filepath = current_app.config['SOURCE_FOLDER'] + saved_filename
 
-    cmd_download_image = 'wget --no-check-certificate -O {filepath} {url}'.format(
+    cmd_check_size = "wget --no-check-certificate --spider {url} 2>&1 | awk '/Length: / {{print $2;}}'; exit 0".format(
+        url=url)
+    filesize = subprocess.check_output(
+        cmd_check_size,
+        stderr=subprocess.STDOUT,
+        shell=True)
+
+    if not filesize:
+        raise FileNotFoundException
+
+    try:
+        filesize = int(filesize)
+    except ValueError:
+        raise FileSizeException
+
+    if filesize > current_app.config['MAX_CONTENT_LENGTH']:
+        raise LargeFileException
+
+    cmd_download_image = "wget --no-check-certificate -O {filepath} {url}".format(
         filepath=source_filepath, url=url)
     subprocess.Popen(cmd_download_image, shell=True).communicate()
+
     return source_filepath
 
 
@@ -66,7 +87,8 @@ def image_optimizer(filename, out_type, size, quality):
         source_filepath = convert_filepath
 
     # ---------- Step 3- change image quality with optimize command
-    optimize_cmd = current_app.config['MOZJPEG_FOLDER'] + "cjpeg -quality {quality} {source_filepath} > {destination_filepath}".format(
+    optimize_cmd = current_app.config[
+                       'MOZJPEG_FOLDER'] + "cjpeg -quality {quality} {source_filepath} > {destination_filepath}".format(
         quality=quality,
         source_filepath=source_filepath,
         destination_filepath=optimized_filepath
@@ -84,10 +106,7 @@ def optimize():
     quality = request.args.get('q')
 
     if request.method == 'POST':
-        try:
-            filename = save_image_from_form(request.files['file'])
-        except:
-            return jsonify({'error': 'The `file` is not valid'}), 400
+        filename = save_image_from_form(request.files['file'])
 
         if 'type' in request.form:
             out_type = request.form['type']
@@ -96,16 +115,12 @@ def optimize():
         if 'q' in request.form:
             quality = request.form['q']
     else:
-        try:
-            url = request.args.get('url')
-            disassembled = urlparse(url)
-            orig_filename, file_ext = splitext(basename(disassembled.path))
-            if not file_ext:
-                return jsonify({'error': '`file extension` is not valid'}), 400
+        url = request.args.get('url')
+        disassembled = urlparse(url)
+        orig_filename, file_ext = splitext(basename(disassembled.path))
+        if not file_ext:
+            return jsonify({'error': '`file extension` is not valid'}), 400
 
-            filename = save_image_from_url(url)
-        except:
-            return jsonify({'error': 'The `url` parameter is not valid'}), 400
+        filename = save_image_from_url(url)
 
     return image_optimizer(filename, out_type, size, quality)
-

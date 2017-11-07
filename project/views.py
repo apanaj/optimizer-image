@@ -51,10 +51,16 @@ def save_image_from_form(file):
     return source_filepath
 
 
-def image_optimizer(filename, out_type, size, quality):
+def image_optimizer(filename, tag, out_type, size, quality):
     source_filepath = filename
     convert_filepath = current_app.config['CONVERT_FOLDER'] + 'convert-' + basename(filename)
     optimized_filepath = current_app.config['OPTIMIZED_FOLDER'] + 'optimize-' + basename(filename)
+
+    if tag:
+        out_type = tag['out_type']
+        quality = tag['quality']
+        size = tag['size']
+
     quality = quality or 75
 
     # ---------- Step 1- argument validation
@@ -101,6 +107,12 @@ def image_optimizer(filename, out_type, size, quality):
 
 @mod.route('/', methods=['GET', 'POST'])
 def optimize():
+    tag_param = request.args.get('tag')
+    tag = current_app.config['OPTIMIZE_TAGS'].get(tag_param.lower()) \
+        if tag_param else None
+    if tag_param and tag is None:
+        return jsonify({'error': '`tag` is not valid'}), 400
+
     out_type = request.args.get('type')
     size = request.args.get('size')
     quality = request.args.get('q')
@@ -123,4 +135,4 @@ def optimize():
 
         filename = save_image_from_url(url)
 
-    return image_optimizer(filename, out_type, size, quality)
+    return image_optimizer(filename, tag, out_type, size, quality)

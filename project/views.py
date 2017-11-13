@@ -105,6 +105,66 @@ def image_optimizer(filename, tag, out_type, size, quality):
     return send_file(optimized_filepath, mimetype='image/jpg')
 
 
+def get_meta_info(filename):
+    cmd_get_meta = "exiv2 {filename}".format(filename=filename)
+    process = subprocess.Popen(cmd_get_meta,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT,
+                               shell=True)
+    raw_result = process.communicate()
+    lines = raw_result[0].decode('utf-8').split('\n')
+
+    response = dict()
+
+    def normalize(input_str):
+        return input_str.strip().lower().replace(' ', '_')
+
+    for line in lines:
+        line_parts = line.split(':')
+        if len(line_parts) != 2:
+            break
+
+        key = normalize(line_parts[0])
+        value = line_parts[1].strip()
+
+        if key == filename:
+            pass
+        elif key == 'file_name':
+            response[key] = basename(value)
+        elif key == 'file_size':
+            response[key] = int(value.replace('Bytes', ''))
+        elif key == 'image_size':
+            response[key] = value.replace(' ', '')
+        else:
+            response[key] = value
+
+    return response
+
+
+def json_to_header_style(input_json):
+    response = {}
+    for key in input_json.keys():
+        new_key = 'X-' + key.title().replace('_', '-')
+        response[new_key] = input_json[key]
+    return response
+
+
+@mod.route('/info', methods=['HEAD', 'GET'])
+def info():
+    url = request.args.get('url')
+    disassembled = urlparse(url)
+    orig_filename, file_ext = splitext(basename(disassembled.path))
+    if not file_ext:
+        return jsonify({'error': '`file extension` is not valid'}), 400
+
+    filename = save_image_from_url(url)
+    meta = get_meta_info(filename)
+
+    if request.method == 'GET':
+        return jsonify(meta)
+    return '', 204, json_to_header_style(meta)
+
+
 @mod.route('/', methods=['GET', 'POST'])
 def optimize():
     tag_param = request.args.get('tag')
@@ -135,4 +195,6 @@ def optimize():
 
         filename = save_image_from_url(url)
 
-    return image_optimizer(filename, tag, out_type, size, quality)
+    meta = get_meta_info(filename)
+    return image_optimizer(filename, tag, out_type, size,
+                           quality), 200, json_to_header_style(meta)

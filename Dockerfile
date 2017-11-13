@@ -10,7 +10,7 @@ RUN apt-get update \
 	&& apt-get install -yq --fix-missing ca-certificates nginx gettext-base supervisor
 
 
-RUN apt-get install -yq --fix-missing autoconf automake libtool nasm make pkg-config wget \
+RUN apt-get install -yq --fix-missing autoconf automake libtool nasm make pkg-config exiv2 wget \
     && wget --no-check-certificate \
         https://github.com/mozilla/mozjpeg/releases/download/v3.2/mozjpeg-3.2-release-source.tar.gz -O - | tar -xz \
     && ( \

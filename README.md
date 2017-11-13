@@ -20,4 +20,6 @@ and if you want send request by `post` method you should set `file` key in form 
 ```
 http://127.0.0.1:5000/?q=70&type=crop&size=200x250&url=https://www.w3schools.com/html/pulpitrock.jpg
 http://127.0.0.1:5000/?tag=thumb&url=https://www.w3schools.com/html/pulpitrock.jpg
+
+http://127.0.0.1:5000/info?url=https://www.w3schools.com/html/pulpitrock.jpg
 ```

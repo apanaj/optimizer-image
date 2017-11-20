@@ -212,5 +212,7 @@ def optimize():
         filename = save_image_from_url(url)
 
     meta = get_meta_info(filename)
-    return image_optimizer(filename, tag, out_type, size,
-                           quality), 200, json_to_header_style(meta)
+    response = image_optimizer(filename, tag, out_type, size, quality)
+    if type(response) == tuple:
+        return response
+    return response, 200, json_to_header_style(meta)

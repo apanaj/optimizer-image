@@ -1,12 +1,13 @@
 import subprocess
 import uuid
 import re
+import magic
 from flask import Blueprint, request, current_app, jsonify, send_file
 from urllib.parse import urlparse
 from os.path import splitext, basename
 
 from exceptions import FileNotFoundException, FileSizeException, \
-    LargeFileException
+    LargeFileException, CjpegConvertException
 
 mod = Blueprint('views', __name__)
 
@@ -74,7 +75,16 @@ def image_optimizer(filename, tag, out_type, size, quality):
     if size and not re.search(r'^(\d*\.*\d+|)x(\d*\.*\d+|)$', size):
         return jsonify({'error': 'The `size` parameter is not valid. (`width`x`height`) '}), 400
 
-    # ---------- Step 2- resize and crop with convert command
+    # # ---------- Step 2- convert Web/P images to PNG format
+    if magic.from_file(filename, mime=True) == 'image/webp':
+        webp_filepath = current_app.config['OPTIMIZED_FOLDER'] + 'webp-' + splitext(
+            basename(filename))[0] + '.png'
+        webp_convert_cmd = "dwebp {input_file} -o {output_file}".format(
+            input_file=filename, output_file=webp_filepath)
+        subprocess.run(webp_convert_cmd, shell=True)
+        source_filepath = webp_filepath
+
+    # ---------- Step 3- resize and crop with convert command
     if out_type:
         convert_options = ''
         if out_type == 'crop':
@@ -92,16 +102,22 @@ def image_optimizer(filename, tag, out_type, size, quality):
         subprocess.run(convert_cmd, shell=True)
         source_filepath = convert_filepath
 
-    # ---------- Step 3- change image quality with optimize command
+    # ---------- Step 4- change image quality with optimize command
     optimize_cmd = current_app.config[
                        'MOZJPEG_FOLDER'] + "cjpeg -quality {quality} {source_filepath} > {destination_filepath}".format(
         quality=quality,
         source_filepath=source_filepath,
         destination_filepath=optimized_filepath
     )
-    subprocess.run(optimize_cmd, shell=True)
+    cjpeg_process = subprocess.Popen(optimize_cmd,
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.STDOUT,
+                                     shell=True)
+    cjpeg_process_result = cjpeg_process.communicate()
+    if cjpeg_process_result[0]:
+        raise CjpegConvertException
 
-    # ---------- Step 4- return optimized image file
+    # ---------- Step 5- return optimized image file
     return send_file(optimized_filepath, mimetype='image/jpg')
 
 

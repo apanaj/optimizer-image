@@ -8,3 +8,7 @@ class LargeFileException(Exception):
 
 class FileSizeException(Exception):
     pass
+
+
+class CjpegConvertException(Exception):
+    pass

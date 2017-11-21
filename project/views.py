@@ -117,7 +117,10 @@ def image_optimizer(filename, tag, out_type, size, quality):
     if cjpeg_process_result[0]:
         raise CjpegConvertException
 
-    # ---------- Step 5- return optimized image file
+    # ---------- Step 5- Clear tmp folder
+    subprocess.Popen('find /tmp/* -mmin +3 -delete', shell=True).communicate()
+
+    # ---------- Step 6- return optimized image file
     return send_file(optimized_filepath, mimetype='image/jpg')
 
 

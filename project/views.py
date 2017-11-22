@@ -118,10 +118,10 @@ def image_optimizer(filename, tag, out_type, size, quality):
         raise CjpegConvertException
 
     # ---------- Step 5- Clear tmp folder
-    subprocess.Popen('find /tmp/* -mmin +3 -delete', shell=True).communicate()
+    subprocess.Popen('find /tmp/* -mmin +3   -delete', shell=True).communicate()
 
     # ---------- Step 6- return optimized image file
-    return send_file(optimized_filepath, mimetype='image/jpg')
+    return send_file(optimized_filepath, mimetype='image/jpeg')
 
 
 def get_meta_info(filename):
@@ -214,8 +214,10 @@ def optimize():
 
         filename = save_image_from_url(url)
 
-    meta = get_meta_info(filename)
     response = image_optimizer(filename, tag, out_type, size, quality)
+    optimized_filename = response.response.file.name
+    meta = get_meta_info(optimized_filename)
+
     if type(response) == tuple:
         return response
     return response, 200, json_to_header_style(meta)

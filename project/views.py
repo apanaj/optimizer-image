@@ -2,6 +2,8 @@ import subprocess
 import uuid
 import re
 import magic
+
+from werkzeug.wsgi import FileWrapper
 from flask import Blueprint, request, current_app, jsonify, send_file
 from urllib.parse import urlparse
 from os.path import splitext, basename
@@ -215,7 +217,11 @@ def optimize():
         filename = save_image_from_url(url)
 
     response = image_optimizer(filename, tag, out_type, size, quality)
-    optimized_filename = response.response.file.name
+    if type(response.response) == FileWrapper:
+        optimized_filename = response.response.file.name
+    else:
+        optimized_filename = response.response.name
+
     meta = get_meta_info(optimized_filename)
 
     if type(response) == tuple:

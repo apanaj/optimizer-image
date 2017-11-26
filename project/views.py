@@ -120,7 +120,9 @@ def image_optimizer(filename, tag, out_type, size, quality):
         raise CjpegConvertException
 
     # ---------- Step 5- Clear tmp folder
-    subprocess.Popen('find /tmp/* -mmin +3   -delete', shell=True).communicate()
+    subprocess.Popen('find {media_folder}* -mmin +3   -delete'.format(
+        media_folder=current_app.config['MEDIA_FOLDER']
+    ), shell=True).communicate()
 
     # ---------- Step 6- return optimized image file
     return send_file(optimized_filepath, mimetype='image/jpeg')

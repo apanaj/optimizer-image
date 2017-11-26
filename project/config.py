@@ -13,17 +13,17 @@ class DefaultConfig(object):
 
 class DevelopmentConfig(DefaultConfig):
     DEBUG = True
-    MEDIA_FOLDER = '/tmp/'
-    SOURCE_FOLDER = '/tmp/'
-    CONVERT_FOLDER = '/tmp/'
-    OPTIMIZED_FOLDER = '/tmp/'
+    MEDIA_FOLDER = '/store/'
+    SOURCE_FOLDER = '/store/'
+    CONVERT_FOLDER = '/store/'
+    OPTIMIZED_FOLDER = '/store/'
     MOZJPEG_FOLDER = '/home/majid/mozjpeg/'
 
 
 class DeploymentConfig(DefaultConfig):
     DEBUG = False
-    MEDIA_FOLDER = '/tmp/'
-    SOURCE_FOLDER = '/tmp/'
-    CONVERT_FOLDER = '/tmp/'
-    OPTIMIZED_FOLDER = '/tmp/'
+    MEDIA_FOLDER = '/store/'
+    SOURCE_FOLDER = '/store/'
+    CONVERT_FOLDER = '/store/'
+    OPTIMIZED_FOLDER = '/store/'
     MOZJPEG_FOLDER = '/mozjpeg/'
